@@ -9,9 +9,12 @@ package model;
  * @author chathushamendis
  */
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.DriverManager;
 import java.sql.Connection;
+import org.mindrot.jbcrypt.BCrypt;
+import singleton.UserSession;
 
 public class MySQL {
     private static final String DB_NAME = "dpitcDB";
@@ -36,5 +39,23 @@ public class MySQL {
     public static Integer executeIUD(String query) throws Exception {
         createConnection();
         return connection.createStatement().executeUpdate(query);
+    }
+
+    public static boolean validateUser(String username, String password) throws Exception {
+        createConnection();
+        String query = "SELECT * FROM users WHERE username = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, username);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            String storedHash = resultSet.getString("password");
+            if (BCrypt.checkpw(password, storedHash)) {
+                UserSession userSession = UserSession.getInstance();
+                userSession.setUsername(resultSet.getString("username"));
+                userSession.setRole(resultSet.getString("role"));
+                return true;
+            }
+        }
+        return false;
     }
 }
