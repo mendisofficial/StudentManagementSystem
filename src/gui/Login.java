@@ -7,6 +7,7 @@ package gui;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import model.MySQL;
 import raven.toast.Notifications;
+import utils.Utility;
 
 /**
  *
@@ -119,6 +120,8 @@ public class Login extends javax.swing.JFrame {
                 // Login successful
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_RIGHT, "Login successful!");
                 // Redirect to another frame or perform other actions
+                this.dispose();
+                Utility.openForm(Dashboard.class.getSimpleName(), new Dashboard());
             } else {
                 // Login failed
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_RIGHT, "Login failed!");
