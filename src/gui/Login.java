@@ -5,6 +5,7 @@
 package gui;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import model.MySQL;
 import raven.toast.Notifications;
 import utils.Utility;
@@ -137,7 +138,8 @@ public class Login extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         // Setup FlatLaf
-        FlatMacDarkLaf.setup();
+        // FlatMacDarkLaf.setup();
+        FlatMacLightLaf.setup();
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
