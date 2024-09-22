@@ -4,17 +4,23 @@
  */
 package gui;
 
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import java.util.logging.Logger;
+import java.io.IOException;
+import java.util.logging.LogManager;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import model.MySQL;
 import raven.toast.Notifications;
 import utils.Utility;
+
+import java.io.IOException;
+import java.util.logging.LogManager;
 
 /**
  *
  * @author chathushamendis
  */
 public class Login extends javax.swing.JFrame {
+    private static final Logger logger = Logger.getLogger(Login.class.getName());
 
     /**
      * Creates new form Login
@@ -112,6 +118,8 @@ public class Login extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Login button
+        
+        logger.info("Login button clicked");
 
         String username = jTextField1.getText();
         String password = new String(jPasswordField1.getPassword()); // Convert char array to String
@@ -128,6 +136,7 @@ public class Login extends javax.swing.JFrame {
                 Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_RIGHT, "Login failed!");
             }
         } catch (Exception e) {
+            logger.severe("Error login: " + e.getMessage());
             e.printStackTrace();
             Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.TOP_RIGHT, "An error occurred!");
         }
@@ -137,8 +146,13 @@ public class Login extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        try {
+            LogManager.getLogManager().readConfiguration(Login.class.getResourceAsStream("/logging.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
         // Setup FlatLaf
-        // FlatMacDarkLaf.setup();
         FlatMacLightLaf.setup();
 
         /* Create and display the form */
