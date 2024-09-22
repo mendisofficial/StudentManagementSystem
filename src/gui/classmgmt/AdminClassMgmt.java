@@ -4,11 +4,10 @@
  */
 package gui.classmgmt;
 
+import com.github.lgooddatepicker.components.TimePickerSettings;
 import gui.Dashboard;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 import model.MySQL;
@@ -92,9 +91,11 @@ public class AdminClassMgmt extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
-        timePicker1 = new com.github.lgooddatepicker.components.TimePicker();
+        TimePickerSettings timeSettings = new TimePickerSettings();
+        timeSettings.use24HourClockFormat();
+        timePicker1 = new com.github.lgooddatepicker.components.TimePicker(timeSettings);
         jLabel5 = new javax.swing.JLabel();
-        timePicker2 = new com.github.lgooddatepicker.components.TimePicker();
+        timePicker2 = new com.github.lgooddatepicker.components.TimePicker(timeSettings);
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -305,24 +306,18 @@ public class AdminClassMgmt extends javax.swing.JFrame {
                 return;
             }
 
-            // Convert time to HH:mm:ss format
-            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mma");
-            LocalTime startLocalTime = LocalTime.parse(startTime.toUpperCase(), timeFormatter);
-            LocalTime endLocalTime = LocalTime.parse(endTime.toUpperCase(), timeFormatter);
-            String formattedStartTime = startLocalTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-            String formattedEndTime = endLocalTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-
             // Insert the new class into the database
             String query = "INSERT INTO classes (class_name, class_day, class_start_time, class_end_time) VALUES (?, ?, ?, ?)";
             PreparedStatement preparedStatement = MySQL.connection.prepareStatement(query);
             preparedStatement.setString(1, className);
             preparedStatement.setString(2, classDay);
-            preparedStatement.setString(3, formattedStartTime);
-            preparedStatement.setString(4, formattedEndTime);
+            preparedStatement.setString(3, startTime);
+            preparedStatement.setString(4, endTime);
             preparedStatement.executeUpdate();
 
             // Refresh the class table
             loadClassTable();
+            clearForm();
 
             Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_RIGHT, "Class added successfully!");
         } catch (Exception e) {
