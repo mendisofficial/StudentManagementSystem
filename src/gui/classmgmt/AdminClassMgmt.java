@@ -7,6 +7,8 @@ package gui.classmgmt;
 import gui.Dashboard;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 import model.MySQL;
@@ -303,13 +305,20 @@ public class AdminClassMgmt extends javax.swing.JFrame {
                 return;
             }
 
+            // Convert time to HH:mm:ss format
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mma");
+            LocalTime startLocalTime = LocalTime.parse(startTime.toUpperCase(), timeFormatter);
+            LocalTime endLocalTime = LocalTime.parse(endTime.toUpperCase(), timeFormatter);
+            String formattedStartTime = startLocalTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+            String formattedEndTime = endLocalTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
             // Insert the new class into the database
             String query = "INSERT INTO classes (class_name, class_day, class_start_time, class_end_time) VALUES (?, ?, ?, ?)";
             PreparedStatement preparedStatement = MySQL.connection.prepareStatement(query);
             preparedStatement.setString(1, className);
             preparedStatement.setString(2, classDay);
-            preparedStatement.setString(3, startTime);
-            preparedStatement.setString(4, endTime);
+            preparedStatement.setString(3, formattedStartTime);
+            preparedStatement.setString(4, formattedEndTime);
             preparedStatement.executeUpdate();
 
             // Refresh the class table
@@ -366,8 +375,7 @@ public class AdminClassMgmt extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // Delete class button
-        
-        
+
         try {
             int selectedRow = jTable1.getSelectedRow();
             if (selectedRow == -1) {
@@ -463,7 +471,7 @@ public class AdminClassMgmt extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // Print report button
-        
+
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("Generator", UserSession.getInstance().getUsername());
 
